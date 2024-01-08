@@ -10,6 +10,10 @@ There is no server required. Just import the project locally (via clone or zip d
 ### SAP Prerequisite
 SAP Note 2526405 to allow field with more than 30 chars.
 ### Notes
+The ABAP API implentation could be:
+- A specific class which inherited from CL_REST_RESOURCE
+- A SICF node which use the above class
+
 Internally, you need to use /UI2/CL_JSON as serializer/unserialiser with:
 - pretty_name = /ui2/cl_json=>pretty_mode-camel_case
 - if field with more than 30 chars, you have to implement method get_mapping (provided by the tool results) and call it for NAME_MAPPINGS parameter
