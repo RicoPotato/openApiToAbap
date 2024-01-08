@@ -4,7 +4,7 @@
 Accelerate ABAP API implementation by converting openAPI/Swagger definition file to abap structures
 
 ## How execute it ?
-There is no server required. Just import the project locally (via clone or zop download) and run index.html file.
+There is no server required. Just import the project locally (via clone or zip download) and run index.html file.
 
 ## Abap implementation informations
 ### SAP Prerequisite
