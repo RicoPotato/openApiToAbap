@@ -1,0 +1,220 @@
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.toolBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.contrast {
+    background-color: #444444;
+    color: #fafafa;
+}
+
+.header {
+    padding: 1rem;
+}
+
+.header .title {
+    display: block;
+    font-size: 1.2em;
+}
+
+.topZone {
+    background-color: #fafafa;
+}
+
+.subHeader {
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    white-space: pre-wrap;
+    color: #444444b3;
+    font-size: smaller;
+    line-height: 1.4rem;
+}
+
+.inputZone {
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    padding: 0 1rem 1rem 1rem;
+    border-bottom: 2px solid #cccccc;
+}
+
+.inputZone * {
+    margin: 0.3rem 0;
+}
+
+.inputTextArea {
+    width: 100%;
+}
+
+.outputZone {
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    padding: 0 1rem 0 1rem;
+    margin: 0;
+    background-color: #fafafa;
+}
+
+.panel {
+    border: 1px solid #cccccc;
+    background-color: white;
+    width: 100%;
+}
+
+.panelHeader {
+    padding: 0.75rem;
+    height: 3rem;
+    border-bottom: 1px solid #cccccc;
+    display: flex;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.panelHeaderItem {
+    padding: 0.25rem;
+}
+
+.flexBoxSpacer {
+    -webkit-flex-grow: 1;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: auto;
+}
+
+.panelHeaderTitle {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: medium;
+}
+
+.panelHeaderAction {
+    /*TO COMPLETE*/
+}
+
+.panelContent {
+    padding: 0.5rem;
+    margin-bottom: 0;
+    margin-top: 0;
+    font-size: smaller;
+}
+
+.panelContentItem {
+    padding: 0.25rem;
+    border-top: 1px solid #e5e5e5;
+}
+
+.panelContentItemTitle {
+    margin: 0.5rem 0;
+}
+
+.messageTable tr {
+    height: 2rem;
+}
+
+.messageTable td {
+    padding: 0.5rem;
+    vertical-align: middle;
+}
+
+.cellNoWrap {
+    white-space: nowrap;
+}
+
+td {
+    vertical-align: top;
+}
+
+/* Snackbar - Get from https://www.w3schools.com/howto/howto_js_snackbar.asp */
+/* The snackbar - position it at the bottom and in the middle of the screen */
+#snackbar {
+    visibility: hidden;
+    /* Hidden by default. Visible on click */
+    min-width: 250px;
+    /* Set a default minimum width */
+    margin-left: -125px;
+    /* Divide value of min-width by 2 */
+    background-color: #333;
+    /* Black background color */
+    color: #fff;
+    /* White text color */
+    text-align: center;
+    /* Centered text */
+    border-radius: 2px;
+    /* Rounded borders */
+    padding: 16px;
+    /* Padding */
+    position: fixed;
+    /* Sit on top of the screen */
+    z-index: 1;
+    /* Add a z-index if needed */
+    left: 50%;
+    /* Center the snackbar */
+    bottom: 30px;
+    /* 30px from the bottom */
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+#snackbar.show {
+    visibility: visible;
+    /* Show the snackbar */
+    /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+        However, delay the fade out process for 2.5 seconds */
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadeout {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}
+
+@keyframes fadeout {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}

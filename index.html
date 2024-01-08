@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>OpenAPI to ABAP</title>
+	<script src="./core/script.js"></script>
+	<link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+	<div class="toolBar header contrast">
+		<div class="title" id="appTitle"></div>
+		<i id="appVersionInfo"></i>
+	</div>
+	<div class="toolBar topZone subHeader">
+		<div id="appSubtitle"></div>
+	</div>
+	<div class="inputZone topZone">
+		<input id="fileInput" type="file" name="myFile"></input>
+		<textarea id="input" placeholder="Ou coller directement ici" rows="5" class="inputTextArea"></textarea>
+		<button type="button" onclick="run()">Run</button>
+	</div>
+	<p id="output" class="outputZone"></p>
+	<!-- The actual snackbar -->
+	<div id="snackbar"></div>
+</body>
+
+</html>

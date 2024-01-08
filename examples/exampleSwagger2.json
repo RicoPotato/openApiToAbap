@@ -1,0 +1,1104 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"title": "Quotation",
+		"version": "12.05",
+		"description": ""
+	},
+	"host": "toto.tutu.com",
+	"schemes": [
+		"https"
+	],
+	"produces": [
+		"application/json"
+	],
+	"basePath": "/api/service/Quotation_1",
+	"paths": {
+		"/": {
+			"post": {
+				"summary": "Create full quote (customer, quote, spare parts)",
+				"description": "# Create full quote\n\n\nAllows in one call to create the customer, the quote, request the spare parts and retrieve the prices.\n",
+				"parameters": [
+					{
+						"name": "request",
+						"in": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/FullQuoteRequest"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Quotation totals and price lines",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/QuotationPrice"
+							}
+						}
+					},
+					"500": {
+						"description": "Error",
+						"schema": {
+							"$ref": "#/definitions/Error"
+						}
+					}
+				}
+			}
+		},
+		"/customers": {
+			"post": {
+				"summary": "Create / Update customer",
+				"description": "# Create / Update customer\n\n\nWe need to create or update a private customer before creating the quotation.\n\n\nTo do so, CMSS send the customer information, one or multiple addresses for the customer, one or multiple phone number, fax number and email address and one or multiple contact. The contact can have one or multiple phone number, email address, fax number\n\n\nCMSS is master of the Customer number, Adress Id & Contact number\n",
+				"parameters": [
+					{
+						"name": "customer",
+						"in": "body",
+						"description": "Definition of the customer to create",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/CustomerDefinition"
+						}
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "Created",
+						"schema": {
+							"$ref": "#/definitions/Created"
+						}
+					},
+					"500": {
+						"description": "Error",
+						"schema": {
+							"$ref": "#/definitions/Error"
+						}
+					}
+				}
+			}
+		},
+		"/quotes": {
+			"post": {
+				"summary": "Create quotation",
+				"description": "# Create quotation\n\n\nCMSS will send all the necessary information to the ERP to create the quotation and generate the PDF.\n\n\nThe information are basic information from the service folder, the full description of the watch, the list of work instruction and spare parts associated, the list of customer request and conditions as well as a list of notes we want to see on the PDF.\n\n\nThe same interface is used for the Quotation and the Confirmation.\n",
+				"parameters": [
+					{
+						"name": "quotation",
+						"in": "body",
+						"description": "Definition of the quotation to create",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/QuotationDefinition"
+						}
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "Request to return parts accepted",
+						"schema": {
+							"$ref": "#/definitions/Created"
+						}
+					},
+					"500": {
+						"description": "Error",
+						"schema": {
+							"$ref": "#/definitions/Error"
+						}
+					}
+				}
+			}
+		},
+		"/prices/{quotationId}": {
+			"get": {
+				"summary": "Get quotation prices",
+				"parameters": [
+					{
+						"name": "quotationId",
+						"in": "path",
+						"description": "Quotation ID",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Quotation totals and price lines",
+						"schema": {
+							"$ref": "#/definitions/QuotationPrice"
+						}
+					},
+					"500": {
+						"description": "Error",
+						"schema": {
+							"$ref": "#/definitions/Error"
+						}
+					}
+				}
+			}
+		},
+		"/PDF": {
+			"post": {
+				"summary": "Generate PDF",
+				"parameters": [
+					{
+						"name": "request",
+						"in": "body",
+						"description": "PDF generation request",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/PDFRequest"
+						}
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "PDF creation accepted",
+						"schema": {
+							"$ref": "#/definitions/Created"
+						}
+					},
+					"500": {
+						"description": "Error",
+						"schema": {
+							"$ref": "#/definitions/Error"
+						}
+					}
+				}
+			}
+		}
+	},
+	"definitions": {
+		"FullQuoteRequest": {
+			"type": "object",
+			"properties": {
+				"serviceFolders": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ServiceFolder"
+					}
+				}
+			}
+		},
+		"ServiceFolder": {
+			"type": "object",
+			"properties": {
+				"customer": {
+					"$ref": "#/definitions/CustomerDefinition"
+				},
+				"quote": {
+					"$ref": "#/definitions/QuotationDefinition"
+				},
+				"spareParts": {
+					"$ref": "#/definitions/RequestedItems"
+				}
+			}
+		},
+		"PDFRequest": {
+			"type": "object",
+			"properties": {
+				"documentId": {
+					"type": "string"
+				},
+				"typeOfDocument": {
+					"type": "string",
+					"enum": [
+						"ProjectInvoice",
+						"Quotation",
+						"Confirmation"
+					]
+				}
+			},
+			"required": [
+				"documentId",
+				"typeOfDocument"
+			]
+		},
+		"CustomerDefinition": {
+			"type": "object",
+			"properties": {
+				"customerNumber": {
+					"description": "Customer Account Number",
+					"type": "string"
+				},
+				"customerName": {
+					"description": "Customer Name",
+					"type": "string"
+				},
+				"personalTitle": {
+					"type": "string"
+				},
+				"firstName": {
+					"type": "string"
+				},
+				"lastName": {
+					"type": "string"
+				},
+				"identificationNumber": {
+					"type": "string"
+				},
+				"notes": {
+					"type": "string"
+				},
+				"isOfficialRetailer": {
+					"type": "boolean"
+				},
+				"onHoldStatus": {
+					"type": "string",
+					"enum": [
+						"No",
+						"Invoice",
+						"All",
+						"Payment",
+						"Requisition",
+						"Never"
+					]
+				},
+				"language": {
+					"description": "Customer language",
+					"type": "string"
+				},
+				"isPrivateCustomer": {
+					"description": "Is private customer ?",
+					"type": "boolean"
+				},
+				"prepaymentMandatory": {
+					"description": "Is Prepayment Mandatory ?",
+					"type": "boolean"
+				},
+				"currency": {
+					"type": "string"
+				},
+				"modeOfDelivery": {
+					"type": "string"
+				},
+				"termsOfPayment": {
+					"type": "string"
+				},
+				"priceGroup": {
+					"type": "string"
+				},
+				"publicPriceGroup": {
+					"type": "string"
+				},
+				"addressesList": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Address"
+					}
+				},
+				"contactInformationsList": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ContactInformation"
+					}
+				},
+				"contactsList": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Contact"
+					}
+				},
+				"customerGroup": {
+					"type": "string"
+				},
+				"salesTaxGroup": {
+					"type": "string"
+				},
+				"taxExemptNumber": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"customerNumber"
+			]
+		},
+		"Address": {
+			"type": "object",
+			"properties": {
+				"addressId": {
+					"type": "string"
+				},
+				"legalEntity": {
+					"type": "string"
+				},
+				"street": {
+					"type": "string"
+				},
+				"streetNumber": {
+					"type": "string"
+				},
+				"city": {
+					"type": "string"
+				},
+				"zipCode": {
+					"type": "string"
+				},
+				"state": {
+					"type": "string"
+				},
+				"country": {
+					"type": "string"
+				},
+				"county": {
+					"type": "string"
+				},
+				"district": {
+					"type": "string"
+				},
+				"postBox": {
+					"type": "string"
+				},
+				"buildingComplement": {
+					"type": "string"
+				},
+				"salesTaxGroup": {
+					"type": "string"
+				},
+				"addressRole": {
+					"type": "string"
+				},
+				"isPrimary": {
+					"type": "boolean"
+				}
+			}
+		},
+		"ContactInformation": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"type": "string",
+					"enum": [
+						"Phone",
+						"Email",
+						"URL",
+						"Telex",
+						"Fax",
+						"Facebook",
+						"Twitter",
+						"LinkedIn"
+					]
+				},
+				"information": {
+					"type": "string"
+				},
+				"isPrimary": {
+					"type": "boolean"
+				}
+			}
+		},
+		"Contact": {
+			"type": "object",
+			"properties": {
+				"contactNumber": {
+					"type": "string"
+				},
+				"contactFirstName": {
+					"type": "string"
+				},
+				"contactLastName": {
+					"type": "string"
+				},
+				"contactEmailAddress": {
+					"type": "string"
+				},
+				"contactPhoneNumber": {
+					"type": "string"
+				},
+				"contactFaxNumber": {
+					"type": "string"
+				},
+				"language": {
+					"type": "string"
+				}
+			}
+		},
+		"Error": {
+			"type": "object",
+			"properties": {
+				"uid": {
+					"type": "string"
+				},
+				"type": {
+					"type": "string",
+					"enum": [
+						"TECHNICAL",
+						"BUSINESS"
+					]
+				},
+				"code": {
+					"type": "string"
+				},
+				"message": {
+					"type": "string"
+				},
+				"details": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"uid",
+				"type",
+				"code",
+				"message"
+			]
+		},
+		"RequestedItems": {
+			"type": "object",
+			"properties": {
+				"isNewGoods": {
+					"description": "Information to know if we are in a New goods service",
+					"type": "boolean"
+				},
+				"materials": {
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"$ref": "#/definitions/RequestedMaterial"
+					}
+				},
+				"serviceFolderId": {
+					"description": "Service folder Id from CMSS",
+					"type": "string"
+				},
+				"watchMaker": {
+					"description": "Type of work realized for a New Goods service",
+					"type": "string"
+				},
+				"site": {
+					"description": "Site on which the spare parts must be requested",
+					"type": "string"
+				}
+			},
+			"required": [
+				"isNewGoods",
+				"materials",
+				"serviceFolderId",
+				"watchMaker",
+				"site",
+				"CMSSRequestId"
+			]
+		},
+		"RequestedMaterial": {
+			"type": "object",
+			"properties": {
+				"rmcBase": {
+					"description": "Item we want to request",
+					"type": "string"
+				},
+				"quantity": {
+					"description": "Quantity of items we want to request",
+					"type": "number",
+					"format": "float"
+				},
+				"department": {
+					"description": "Department requesting the item",
+					"type": "string"
+				},
+				"serialNumber": {
+					"description": "Serial Number of the watch",
+					"type": "string"
+				},
+				"CMSSRequestId": {
+					"description": "Id of the request generated by CMSS",
+					"type": "string"
+				},
+				"toRelease": {
+					"description": "Should we release the parts to warehouse",
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"rmcBase",
+				"quantity",
+				"department"
+			]
+		},
+		"Created": {
+			"type": "object",
+			"properties": {
+				"code": {
+					"type": "integer"
+				},
+				"status": {
+					"type": "string"
+				}
+			},
+			"example": {
+				"code": 201,
+				"status": "Created"
+			}
+		},
+		"QuotationDefinition": {
+			"type": "object",
+			"properties": {
+				"serviceFolderId": {
+					"type": "string"
+				},
+				"linkedQuotationId": {
+					"type": "string",
+					"description": "New Goods - Used to link several quotations."
+				},
+				"customerNumber": {
+					"type": "string"
+				},
+				"customerReference": {
+					"type": "string"
+				},
+				"invoicedCustomerNumber": {
+					"type": "string"
+				},
+				"quotationId": {
+					"type": "string"
+				},
+				"componentIdTagNumber": {
+					"type": "string"
+				},
+				"isNewGoods": {
+					"type": "boolean"
+				},
+				"workInstructionsList": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/WorkInstruction"
+					}
+				},
+				"materialsList": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Material"
+					}
+				},
+				"notesList": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Note"
+					}
+				},
+				"customerRequestsList": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/CustomerRequest"
+					}
+				},
+				"conditionsList": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Condition"
+					}
+				},
+				"modeOfDelivery": {
+					"type": "string"
+				},
+				"lastServiceFolderId": {
+					"type": "string"
+				},
+				"lastServiceInvoiceDate": {
+					"type": "string",
+					"format": "date"
+				},
+				"receptionDate": {
+					"type": "string",
+					"format": "date"
+				},
+				"estimationDate": {
+					"type": "string",
+					"format": "date"
+				},
+				"deliveryAddressId": {
+					"type": "string"
+				},
+				"invoicingAddressId": {
+					"type": "string"
+				},
+				"isPrepaymentMandatory": {
+					"type": "boolean"
+				},
+				"automaticAcceptance": {
+					"type": "number"
+				},
+				"plannedDuration": {
+					"type": "integer"
+				},
+				"timeUnit": {
+					"type": "string"
+				},
+				"phoneNumber": {
+					"type": "string"
+				},
+				"emailAddress": {
+					"type": "string"
+				},
+				"faxNumber": {
+					"type": "string"
+				},
+				"invoicedCustomerEmailAddress": {
+					"type": "string"
+				},
+				"invoicedCustomerFaxNumber": {
+					"type": "string"
+				},
+				"invoicedCustomerPhoneNumber": {
+					"type": "string"
+				},
+				"termsOfPayment": {
+					"type": "string"
+				},
+				"proceedLimit": {
+					"type": "number",
+					"format": "float"
+				},
+				"priceGroup": {
+					"type": "string"
+				},
+				"publicPriceGroup": {
+					"type": "string"
+				},
+				"serialNumber": {
+					"type": "string"
+				},
+				"brand": {
+					"type": "string"
+				},
+				"commercialReference": {
+					"type": "string"
+				},
+				"sellOutDate": {
+					"type": "string",
+					"format": "date"
+				},
+				"collection": {
+					"type": "string"
+				},
+				"catalogLine": {
+					"type": "string"
+				},
+				"watchMaterial": {
+					"type": "string"
+				},
+				"watchCategory": {
+					"type": "string"
+				},
+				"watchHeadColor": {
+					"type": "string"
+				},
+				"caseRmcBase": {
+					"type": "string"
+				},
+				"caseMaterialDescription": {
+					"type": "string"
+				},
+				"caseCatalogLine": {
+					"type": "string"
+				},
+				"otherCase": {
+					"type": "string"
+				},
+				"caseNote": {
+					"type": "string"
+				},
+				"caliber": {
+					"type": "string"
+				},
+				"bezelRmcBase": {
+					"type": "string"
+				},
+				"bezelDescription": {
+					"type": "string"
+				},
+				"bezelMaterialDescription": {
+					"type": "string"
+				},
+				"otherBezel": {
+					"type": "string"
+				},
+				"crystal": {
+					"type": "string"
+				},
+				"crystalDescription": {
+					"type": "string"
+				},
+				"otherCrystal": {
+					"type": "string"
+				},
+				"displayColor": {
+					"type": "string"
+				},
+				"discLanguage": {
+					"type": "string"
+				},
+				"discColor": {
+					"type": "string"
+				},
+				"movementRmcBase": {
+					"type": "string"
+				},
+				"movementMaterialDescription": {
+					"type": "string"
+				},
+				"movementSerialNumber": {
+					"type": "string"
+				},
+				"otherMovement": {
+					"type": "string"
+				},
+				"movementNote": {
+					"type": "string"
+				},
+				"movementLiftAngle": {
+					"type": "string"
+				},
+				"dialRmcBase": {
+					"type": "string"
+				},
+				"dialMaterialDescription": {
+					"type": "string"
+				},
+				"otherDial": {
+					"type": "string"
+				},
+				"dialNote": {
+					"type": "string"
+				},
+				"setOfHandsRmcBase": {
+					"type": "string"
+				},
+				"setOfHandsMaterialDescription": {
+					"type": "string"
+				},
+				"otherSetOfHands": {
+					"type": "string"
+				},
+				"luminous": {
+					"type": "string"
+				},
+				"braceletRmcBase": {
+					"type": "string"
+				},
+				"braceletMaterialDescription": {
+					"type": "string"
+				},
+				"braceletMetalColor": {
+					"type": "string"
+				},
+				"braceletMaterialId": {
+					"type": "string"
+				},
+				"braceletManufacturingCode": {
+					"type": "string"
+				},
+				"braceletCollection": {
+					"type": "string"
+				},
+				"braceletCatalogueLine": {
+					"type": "string"
+				},
+				"otherBracelet": {
+					"type": "string"
+				},
+				"braceletNote": {
+					"type": "string"
+				},
+				"numberOfLinks6h": {
+					"type": "string"
+				},
+				"numberOfLinks12h": {
+					"type": "string"
+				},
+				"curvedFitting": {
+					"type": "string"
+				},
+				"claspPosition": {
+					"type": "string"
+				},
+				"receptionSite": {
+					"type": "string"
+				},
+				"serviceWarrantyStartDate": {
+					"type": "string",
+					"format": "date"
+				},
+				"serviceWarrantyEndDate": {
+					"type": "string",
+					"format": "date"
+				},
+				"salesWarrantyStartDate": {
+					"type": "string",
+					"format": "date"
+				},
+				"salesWarrantyEndDate": {
+					"type": "string",
+					"format": "date"
+				},
+				"globalBraceletWarrantyExclusion": {
+					"type": "boolean"
+				},
+				"globalPerformanceWarrantyExclusion": {
+					"type": "boolean"
+				},
+				"globalWaterproofWarrantyExclusion": {
+					"type": "boolean"
+				},
+				"serviceTerms": {
+					"type": "string"
+				},
+				"CMSSServiceType": {
+					"type": "string"
+				},
+				"replacementValue": {
+					"type": "number",
+					"format": "float"
+				},
+				"braceletType": {
+					"type": "string"
+				},
+				"caseDescription": {
+					"type": "string"
+				},
+				"isConfirmation": {
+					"type": "boolean"
+				},
+				"isQuotation": {
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"customerNumber",
+				"receptionSite"
+			]
+		},
+		"WorkInstruction": {
+			"type": "object",
+			"properties": {
+				"unitSalesPrice": {
+					"type": "number"
+				},
+				"unitPublicPrice": {
+					"type": "number"
+				},
+				"totalSalesPrice": {
+					"type": "number"
+				},
+				"totalPublicPrice": {
+					"type": "number"
+				},
+				"workInstructionDescription": {
+					"type": "string"
+				},
+				"discountInPercent": {
+					"type": "number"
+				},
+				"discountInFixedValue": {
+					"type": "number"
+				},
+				"freeOfCharge": {
+					"type": "boolean"
+				},
+				"doNotPrint": {
+					"type": "boolean"
+				},
+				"isOptional": {
+					"type": "boolean"
+				},
+				"isDeclined": {
+					"type": "boolean"
+				},
+				"isUnderSalesWarranty": {
+					"type": "boolean"
+				},
+				"isUnderServiceWarranty": {
+					"type": "boolean"
+				},
+				"isFreightCost": {
+					"type": "boolean"
+				},
+				"isGlobalDiscount": {
+					"type": "boolean"
+				},
+				"workInstructionName": {
+					"type": "string"
+				}
+			}
+		},
+		"Material": {
+			"type": "object",
+			"properties": {
+				"rmcBase": {
+					"type": "string"
+				},
+				"quantity": {
+					"type": "integer"
+				},
+				"unitPrice": {
+					"type": "number"
+				},
+				"publicUnitPrice": {
+					"type": "number"
+				},
+				"materialDescription": {
+					"type": "string"
+				},
+				"discountInPercent": {
+					"type": "number"
+				},
+				"discountInFixedValue": {
+					"type": "number"
+				},
+				"freeOfCharge": {
+					"type": "boolean"
+				},
+				"doNotPrint": {
+					"type": "boolean"
+				},
+				"isOptional": {
+					"type": "boolean"
+				},
+				"isDeclined": {
+					"type": "boolean"
+				},
+				"workInstruction": {
+					"type": "string"
+				},
+				"isUnderSalesWarranty": {
+					"type": "boolean"
+				},
+				"isUnderServiceWarranty": {
+					"type": "boolean"
+				},
+				"dateValue": {
+					"type": "string",
+					"format": "date"
+				},
+				"newBraceletWarrantyExclusion": {
+					"type": "boolean"
+				},
+				"newPerformanceWarrantyExclusion": {
+					"type": "boolean"
+				},
+				"newWaterproofWarrantyExclusion": {
+					"type": "boolean"
+				}
+			}
+		},
+		"CustomerRequest": {
+			"type": "object",
+			"properties": {
+				"customerRequestName": {
+					"type": "string"
+				}
+			}
+		},
+		"Note": {
+			"type": "object",
+			"properties": {
+				"noteText": {
+					"type": "string"
+				},
+				"noteType": {
+					"type": "string"
+				}
+			}
+		},
+		"Condition": {
+			"type": "object",
+			"properties": {
+				"conditionName": {
+					"type": "string"
+				}
+			}
+		},
+		"QuotationPrice": {
+			"type": "object",
+			"properties": {
+				"quotationId": {
+					"type": "string"
+				},
+				"totalsList": {
+					"$ref": "#/definitions/Totals"
+				},
+				"priceLinesList": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/PriceLine"
+					}
+				}
+			},
+			"required": [
+				"quotationId",
+				"totalsList",
+				"priceLinesList"
+			]
+		},
+		"Totals": {
+			"type": "object",
+			"properties": {
+				"totalSalesPriceHT": {
+					"type": "number",
+					"format": "float"
+				},
+				"totalPublicPriceHT": {
+					"type": "number",
+					"format": "float"
+				},
+				"totalSalesPriceTTC": {
+					"type": "number",
+					"format": "float"
+				},
+				"totalPublicPriceTTC": {
+					"type": "number",
+					"format": "float"
+				},
+				"salesVATAmount": {
+					"type": "number",
+					"format": "float"
+				},
+				"publicVATAmount": {
+					"type": "number",
+					"format": "float"
+				}
+			}
+		},
+		"PriceLine": {
+			"type": "object",
+			"properties": {
+				"workInstructionId": {
+					"type": "string"
+				},
+				"materialId": {
+					"type": "string"
+				},
+				"publicPriceHT": {
+					"type": "number",
+					"format": "float"
+				},
+				"salesPriceHT": {
+					"type": "number",
+					"format": "float"
+				},
+				"lineNumber": {
+					"type": "integer"
+				},
+				"discount": {
+					"type": "number",
+					"format": "float"
+				},
+				"discountPercent": {
+					"type": "number",
+					"format": "float"
+				},
+				"quantity": {
+					"type": "number",
+					"format": "float"
+				},
+				"unitPrice": {
+					"type": "number",
+					"format": "float"
+				},
+				"publicUnitPrice": {
+					"type": "number",
+					"format": "float"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,789 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "This is a first version of the BOM Finance, check the TBDs for open points",
+    "version": "0.0.2",
+    "title": "BOM Finance",
+    "contact": {
+      "name": "Gianni Pucciani & Chiara Battipaglia",
+      "email": "gianni.pucciani@tcs.ch"
+    }
+  },
+  "servers": [
+    {
+      "url": "/znis/v1/finance"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "AccountingTransaction": {
+        "description": "an operational business transaction for accounting purposes in the source system.",
+        "type": "object",
+        "properties": {
+          "transaction-id": {
+            "type": "string",
+            "description": "a unique identifier associated to the transaction",
+            "example": "1111111"
+          },
+          "transaction-type": {
+            "type": "string",
+            "enum": [
+              "INVOIC",
+              "RRUNPR",
+              "CRNOTE",
+              "INCPMT",
+              "RREAPR",
+              "REVERS"
+            ],
+            "example": "INVOIC"
+          },
+          "account": {
+            "type": "string",
+            "example": "11386940"
+          },
+          "financial-documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FinancialDocument"
+            }
+          }
+        }
+      },
+      "FinancialDocument": {
+        "description": "SAP concept to allow invoicing, intercompany, revenue recognition on a business transaction",
+        "type": "object",
+        "properties": {
+          "document-type": {
+            "type": "string",
+            "enum": [
+              "invoice",
+              "intercompany"
+            ],
+            "example": "invoice"
+          },
+          "invoice-number": {
+            "type": "integer",
+            "description": "allows to retrieve the invoice number"
+          },
+          "document-date": {
+            "type": "string",
+            "format": "date",
+            "example": "2020-02-17"
+          },
+          "value-date": {
+            "type": "string",
+            "format": "date",
+            "example": "2020-02-20"
+          },
+          "currency": {
+            "type": "string",
+            "example": "CHF"
+          },
+          "policy-id": {
+            "example": "'PO123456789-11000/00'",
+            "type": "string"
+          },
+          "product-code": {
+            "type": "string",
+            "example": "101",
+            "enum": [
+              "101",
+              "102"
+            ]
+          },
+          "product-version": {
+            "type": "number",
+            "example": 2018
+          },
+          "first-effective-date": {
+            "type": "string",
+            "format": "date",
+            "example": "2020-03-23"
+          },
+          "coverage-start-date": {
+            "type": "string",
+            "format": "date",
+            "example": "2020-02-29"
+          },
+          "coverage-end-date": {
+            "type": "string",
+            "example": "2021-03-27",
+            "format": "date"
+          },
+          "family-individual": {
+            "type": "string",
+            "example": "FAM",
+            "enum": [
+              "FAM",
+              "IND"
+            ]
+          },
+          "motorized-nonmotorized": {
+            "type": "string",
+            "example": "NMOT",
+            "enum": [
+              "MOT",
+              "NMOT"
+            ]
+          },
+          "policy-section": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 3,
+            "example": "GE"
+          },
+          "policy-camping-section": {
+            "type": "string",
+            "example": "101"
+          },
+          "financial-postings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FinancialPosting"
+            }
+          }
+        }
+      },
+      "FinancialPosting": {
+        "description": "TBD",
+        "type": "object",
+        "properties": {
+          "posting-id": {
+            "type": "string",
+            "description": "a unique ID for the posting",
+            "example": "101"
+          },
+          "cover-code": {
+            "type": "number",
+            "example": 100000088
+          },
+          "cover-name": {
+            "type": "string",
+            "example": "HQ-fee"
+          },
+          "gl-account": {
+            "type": "string",
+            "enum": [
+              "10200",
+              "30000",
+              "40800",
+              "20080",
+              "10280",
+              "30100",
+              "30090",
+              "20111",
+              "30190",
+              "20017",
+              "30001"
+            ],
+            "example": "10200"
+          },
+          "posting-key": {
+            "type": "string",
+            "enum": [
+              "debit",
+              "credit"
+            ],
+            "example": "debit"
+          },
+          "gross-amount": {
+            "type": "number",
+            "format": "float",
+            "example": 80
+          },
+          "booking-company-id": {
+            "type": "string",
+            "example": "1000"
+          },
+          "cover-company-id": {
+            "type": "string",
+            "example": "1000"
+          },
+          "tax-type": {
+            "type": "string",
+            "enum": [
+              "VAT",
+              "DT"
+            ],
+            "example": "VAT"
+          },
+          "tax-code": {
+            "type": "string",
+            "enum": [
+              "A0",
+              "A1",
+              "DT",
+              "D0"
+            ],
+            "example": "A0"
+          },
+          "tax-percentage": {
+            "type": "string",
+            "enum": [
+              "0",
+              "7.7",
+              "5"
+            ],
+            "example": "0"
+          }
+        },
+        "required": [
+          "posting-id",
+          "gl-account",
+          "gross-amount",
+          "booking-company-id"
+        ]
+      },
+      "FunctionalError": {
+        "title": "FunctionalError",
+        "type": "object",
+        "description": "",
+        "properties": {
+          "error-id": {
+            "type": "string"
+          },
+          "related-object-id": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "relating-error": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FunctionalChildError"
+            }
+          }
+        },
+        "xml": {
+          "name": "FunctionalError"
+        }
+      },
+      "FunctionalChildError": {
+        "title": "FunctionaChildlError",
+        "type": "object",
+        "description": "",
+        "properties": {
+          "error-id": {
+            "type": "string"
+          },
+          "related-object-id": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "FunctionalChildError"
+        }
+      }
+    }
+  },
+  "paths": {
+    "/accounting": {
+      "get": {
+        "summary": "Your GET endpoint",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "an operational business transaction for accounting purposes in the source system.",
+                  "type": "object",
+                  "properties": {
+                    "transaction-id": {
+                      "type": "string",
+                      "description": "a unique identifier associated to the transaction",
+                      "example": "1111111"
+                    },
+                    "transaction-type": {
+                      "type": "string",
+                      "enum": [
+                        "INVOIC",
+                        "RRUNPR",
+                        "CRNOTE",
+                        "INCPMT",
+                        "RREAPR"
+                      ],
+                      "example": "INVOIC"
+                    },
+                    "account": {
+                      "type": "string",
+                      "example": "11386940"
+                    },
+                    "financial-documents": {
+                      "type": "array",
+                      "items": {
+                        "description": "SAP concept to allow invoicing, intercompany, revenue recognition on a business transaction",
+                        "type": "object",
+                        "properties": {
+                          "document-type": {
+                            "type": "string",
+                            "enum": [
+                              "invoice",
+                              "intercompany"
+                            ],
+                            "example": "invoice"
+                          },
+                          "invoice-number": {
+                            "type": "integer",
+                            "description": "allows to retrieve the invoice number"
+                          },
+                          "document-date": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2020-02-17"
+                          },
+                          "value-date": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2020-02-20"
+                          },
+                          "currency": {
+                            "type": "string",
+                            "example": "CHF"
+                          },
+                          "policy-id": {
+                            "example": "'PO123456789-11000/00'",
+                            "type": "string"
+                          },
+                          "product-code": {
+                            "type": "string",
+                            "example": "101",
+                            "enum": [
+                              "101",
+                              "102"
+                            ]
+                          },
+                          "product-version": {
+                            "type": "number",
+                            "example": 2018
+                          },
+                          "first-effective-date": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2020-03-23"
+                          },
+                          "coverage-start-date": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2020-02-29"
+                          },
+                          "coverage-end-date": {
+                            "type": "string",
+                            "example": "2021-03-27",
+                            "format": "date"
+                          },
+                          "family-individual": {
+                            "type": "string",
+                            "example": "FAM",
+                            "enum": [
+                              "FAM",
+                              "IND"
+                            ]
+                          },
+                          "motorized-nonmotorized": {
+                            "type": "string",
+                            "example": "NMOT",
+                            "enum": [
+                              "MOT",
+                              "NMOT"
+                            ]
+                          },
+                          "policy-section": {
+                            "type": "string",
+                            "minLength": 2,
+                            "maxLength": 3,
+                            "example": "GE"
+                          },
+                          "policy-camping-section": {
+                            "type": "string",
+                            "example": "101"
+                          },
+                          "financial-postings": {
+                            "type": "array",
+                            "items": {
+                              "description": "TBD",
+                              "type": "object",
+                              "properties": {
+                                "posting-id": {
+                                  "type": "string",
+                                  "description": "a unique ID for the posting",
+                                  "example": "101"
+                                },
+                                "cover-code": {
+                                  "type": "number",
+                                  "example": 100000088
+                                },
+                                "cover-name": {
+                                  "type": "string",
+                                  "example": "HQ-fee"
+                                },
+                                "gl-account": {
+                                  "type": "string",
+                                  "enum": [
+                                    "10200",
+                                    "30000",
+                                    "40800",
+                                    "20080",
+                                    "10280",
+                                    "30100",
+                                    "30090",
+                                    "20111",
+                                    "30190",
+                                    "20017",
+                                    "30001"
+                                  ],
+                                  "example": "10200"
+                                },
+                                "posting-key": {
+                                  "type": "string",
+                                  "enum": [
+                                    "debit",
+                                    "credit"
+                                  ],
+                                  "example": "debit"
+                                },
+                                "gross-amount": {
+                                  "type": "number",
+                                  "format": "float",
+                                  "example": 80
+                                },
+                                "booking-company-id": {
+                                  "type": "string",
+                                  "example": "1000"
+                                },
+                                "cover-company-id": {
+                                  "type": "string",
+                                  "example": "1000"
+                                },
+                                "tax-type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "VAT",
+                                    "DT"
+                                  ],
+                                  "example": "VAT"
+                                },
+                                "tax-code": {
+                                  "type": "string",
+                                  "enum": [
+                                    "A0",
+                                    "A1",
+                                    "DT",
+                                    "D0"
+                                  ],
+                                  "example": "A0"
+                                },
+                                "tax-percentage": {
+                                  "type": "string",
+                                  "enum": [
+                                    "0",
+                                    "7.7",
+                                    "5"
+                                  ],
+                                  "example": "0"
+                                }
+                              },
+                              "required": [
+                                "posting-id",
+                                "gl-account",
+                                "gross-amount",
+                                "booking-company-id"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "transaction-id",
+                    "transaction-type",
+                    "account"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FunctionalError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FunctionalError"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-getAcc",
+        "description": "getAccountingTransaction"
+      },
+      "post": {
+        "summary": "",
+        "operationId": "post-insertAcc",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FunctionalError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FunctionalError"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "an operational business transaction for accounting purposes in the source system.",
+                "type": "object",
+                "properties": {
+                  "transaction-id": {
+                    "type": "string",
+                    "description": "a unique identifier associated to the transaction",
+                    "example": "1111111"
+                  },
+                  "transaction-type": {
+                    "type": "string",
+                    "enum": [
+                      "INVOIC",
+                      "RRUNPR",
+                      "CRNOTE",
+                      "INCPMT",
+                      "RREAPR"
+                    ],
+                    "example": "INVOIC"
+                  },
+                  "account": {
+                    "type": "string",
+                    "example": "11386940"
+                  },
+                  "financial-documents": {
+                    "type": "array",
+                    "items": {
+                      "description": "SAP concept to allow invoicing, intercompany, revenue recognition on a business transaction",
+                      "type": "object",
+                      "properties": {
+                        "document-type": {
+                          "type": "string",
+                          "enum": [
+                            "invoice",
+                            "intercompany"
+                          ],
+                          "example": "invoice"
+                        },
+                        "invoice-number": {
+                          "type": "integer",
+                          "description": "allows to retrieve the invoice number"
+                        },
+                        "document-date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2020-02-17"
+                        },
+                        "value-date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2020-02-20"
+                        },
+                        "currency": {
+                          "type": "string",
+                          "example": "CHF"
+                        },
+                        "policy-id": {
+                          "example": "'PO123456789-11000/00'",
+                          "type": "string"
+                        },
+                        "product-code": {
+                          "type": "string",
+                          "example": "101",
+                          "enum": [
+                            "101",
+                            "102"
+                          ]
+                        },
+                        "product-version": {
+                          "type": "number",
+                          "example": 2018
+                        },
+                        "first-effective-date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2020-03-23"
+                        },
+                        "coverage-start-date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2020-02-29"
+                        },
+                        "coverage-end-date": {
+                          "type": "string",
+                          "example": "2021-03-27",
+                          "format": "date"
+                        },
+                        "family-individual": {
+                          "type": "string",
+                          "example": "FAM",
+                          "enum": [
+                            "FAM",
+                            "IND"
+                          ]
+                        },
+                        "motorized-nonmotorized": {
+                          "type": "string",
+                          "example": "NMOT",
+                          "enum": [
+                            "MOT",
+                            "NMOT"
+                          ]
+                        },
+                        "policy-section": {
+                          "type": "string",
+                          "minLength": 2,
+                          "maxLength": 3,
+                          "example": "GE"
+                        },
+                        "policy-camping-section": {
+                          "type": "string",
+                          "example": "101"
+                        },
+                        "financial-postings": {
+                          "type": "array",
+                          "items": {
+                            "description": "TBD",
+                            "type": "object",
+                            "properties": {
+                              "posting-id": {
+                                "type": "string",
+                                "description": "a unique ID for the posting",
+                                "example": "101"
+                              },
+                              "cover-code": {
+                                "type": "number",
+                                "example": 100000088
+                              },
+                              "cover-name": {
+                                "type": "string",
+                                "example": "HQ-fee"
+                              },
+                              "gl-account": {
+                                "type": "string",
+                                "enum": [
+                                  "10200",
+                                  "30000",
+                                  "40800",
+                                  "20080",
+                                  "10280",
+                                  "30100",
+                                  "30090",
+                                  "20111",
+                                  "30190",
+                                  "20017",
+                                  "30001"
+                                ],
+                                "example": "10200"
+                              },
+                              "posting-key": {
+                                "type": "string",
+                                "enum": [
+                                  "debit",
+                                  "credit"
+                                ],
+                                "example": "debit"
+                              },
+                              "gross-amount": {
+                                "type": "number",
+                                "format": "float",
+                                "example": 80
+                              },
+                              "booking-company-id": {
+                                "type": "string",
+                                "example": "1000"
+                              },
+                              "cover-company-id": {
+                                "type": "string",
+                                "example": "1000"
+                              },
+                              "tax-type": {
+                                "type": "string",
+                                "enum": [
+                                  "VAT",
+                                  "DT"
+                                ],
+                                "example": "VAT"
+                              },
+                              "tax-code": {
+                                "type": "string",
+                                "enum": [
+                                  "A0",
+                                  "A1",
+                                  "DT",
+                                  "D0"
+                                ],
+                                "example": "A0"
+                              },
+                              "tax-percentage": {
+                                "type": "string",
+                                "enum": [
+                                  "0",
+                                  "7.7",
+                                  "5"
+                                ],
+                                "example": "0"
+                              }
+                            },
+                            "required": [
+                              "posting-id",
+                              "gl-account",
+                              "gross-amount",
+                              "booking-company-id"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "transaction-id",
+                  "transaction-type",
+                  "account"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
