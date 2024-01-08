@@ -2,6 +2,8 @@
  * OpenAPI to ABAP structures *
  ****************************************
 
+* 08.01.2024 Création répertoire GIT
+
 ***************************************
 * V0.6 - 31.08.2023
  - Permettre d'intepreter "allOf" d'un document openAPI. allOf permet d'inclure les proprieté d'une structure au même niveau. L'équivalent ABAP est INCLUDE TYPE
